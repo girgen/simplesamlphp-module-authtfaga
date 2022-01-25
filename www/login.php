@@ -5,23 +5,23 @@
  *
  */
 // Get session object
-$session = SimpleSAML_Session::getSession();
+$session = SimpleSAML\Session::getSession();
 
 // Get the authetication state
 $authStateId = $_REQUEST['AuthState'];
 /** @noinspection PhpUnhandledExceptionInspection */
-$state = SimpleSAML_Auth_State::loadState($authStateId, 'authtfaga.stage');
+$state = SimpleSAML\Auth\State::loadState($authStateId, 'authtfaga.stage');
 
 if(array_key_exists("SimpleSAML_Auth_Source.id", $state)) $authId = $state['SimpleSAML_Auth_Source.id'];
 else $authId = $state['\SimpleSAML\Auth\Source.id'];
 
 /** @noinspection PhpUnhandledExceptionInspection */
-$as = SimpleSAML_Configuration::getConfig('authsources.php')->getValue($authId);
+$as = SimpleSAML\Configuration::getConfig('authsources.php')->getValue($authId);
 
 // Use 2 factor authentication classvar_dump($authId);
 /** @noinspection PhpUnhandledExceptionInspection */
 /** @var sspmod_authtfaga_Auth_Source_authtfaga $gaLogin */
-$gaLogin = SimpleSAML_Auth_Source::getById($authId, 'sspmod_authtfaga_Auth_Source_authtfaga');
+$gaLogin = SimpleSAML\Auth\Source::getById($authId, 'sspmod_authtfaga_Auth_Source_authtfaga');
 if ($gaLogin === null) {
 	/** @noinspection PhpUnhandledExceptionInspection */
 	throw new Exception('Invalid authentication source: ' . $authId);
@@ -30,16 +30,16 @@ if ($gaLogin === null) {
 // Init template
 $template = 'authtfaga:login.php';
 /** @noinspection PhpUnhandledExceptionInspection */
-$globalConfig = SimpleSAML_Configuration::getInstance();
+$globalConfig = SimpleSAML\Configuration::getInstance();
 /** @noinspection PhpParamsInspection */
-$t = new SimpleSAML_XHTML_Template($globalConfig, $template);
+$t = new SimpleSAML\XHTML\Template($globalConfig, $template);
 
 $errorCode = null;
 
 //If user doesn't have session, force to use the main authentication method
 if (!$session->isValid($as['mainAuthSource'])) {
 	/** @noinspection PhpUnhandledExceptionInspection */
-	$mainLogin = SimpleSAML_Auth_Source::getById($as['mainAuthSource']);
+	$mainLogin = SimpleSAML\Auth\Source::getById($as['mainAuthSource']);
 	$mainLogin->initLogin(SimpleSAML\Utils\HTTP::getSelfURL());
 }
 
@@ -64,7 +64,7 @@ if (is_null($isEnabled) || isset($_GET['postSetEnable2fa'])) {
             $t->data['qrcode'] = $gaLogin->getQRCodeGoogleUrl($totpIssuer . ':' . $uid, $totpIssuer, $gaKey);
         } elseif ($_POST['setEnable2f'] == 0) {
             $gaLogin->disable2fa($uid);
-            SimpleSAML_Auth_Source::completeAuth($state);
+            SimpleSAML\Auth\Source::completeAuth($state);
         }
     } else {
         $t->data['todo'] = 'choose2enable';
@@ -82,7 +82,7 @@ if (is_null($isEnabled) || isset($_GET['postSetEnable2fa'])) {
                 unset($state['Attributes']['userCertificate;binary']);
             }
 
-            SimpleSAML_Auth_Source::completeAuth($state);
+            SimpleSAML\Auth\Source::completeAuth($state);
         } else {
             $errorCode = 'WRONGOTP';
             $t->data['todo'] = 'loginOTP';
@@ -98,7 +98,7 @@ if (is_null($isEnabled) || isset($_GET['postSetEnable2fa'])) {
     }
 
     // User has set up not to use 2 factor, so he is logged in
-    SimpleSAML_Auth_Source::completeAuth($state);
+    SimpleSAML\Auth\Source::completeAuth($state);
 }
 
 $t->data['stateparams'] = array('AuthState' => $authStateId);

@@ -19,7 +19,7 @@
  *
  */
 
-class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML_Auth_Source
+class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML\Auth\Source
 {
     /**
      * The string used to identify our states.
@@ -92,9 +92,9 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML_Auth_Source
         // We are going to need the authId in order to retrieve this authentication source later.
         $state[self::AUTHID] = $this->authId;
 
-        $id = SimpleSAML_Auth_State::saveState($state, self::STAGEID);
+        $id = SimpleSAML\Auth\State::saveState($state, self::STAGEID);
 
-        $url = SimpleSAML_Module::getModuleURL('authtfaga/login.php');
+        $url = SimpleSAML\Module::getModuleURL('authtfaga/login.php');
 		SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('AuthState' => $id));
     }
 
@@ -123,7 +123,7 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML_Auth_Source
         }
         $result = $this->dbh->query($q);
         if($result===false) throw new Exception('Enable TFA failed '.$q);
-        SimpleSAML_Logger::info('authtfaga: '.$uid.' turns ON the two-factor authentication.');
+        SimpleSAML\Logger::info('authtfaga: '.$uid.' turns ON the two-factor authentication.');
 
         return true;
     }
@@ -136,7 +136,7 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML_Auth_Source
             $q = "REPLACE INTO sspga_status (enable, uid) VALUES (0, '$uid')";
         }
         $this->dbh->query($q);
-        SimpleSAML_Logger::info('authtfaga: '.$uid.' turns OFF the two-factor authentication.');
+        SimpleSAML\Logger::info('authtfaga: '.$uid.' turns OFF the two-factor authentication.');
 
         return true;
     }
@@ -163,7 +163,7 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML_Auth_Source
             $q = 'REPLACE INTO sspga_gakeys (uid,gakey) VALUES ("'.$uid.'","'.$ga_id.'");';
         }
         $this->dbh->query($q);
-        SimpleSAML_Logger::info('authtfaga: '.$uid.' register his gakey: '.$ga_id);
+        SimpleSAML\Logger::info('authtfaga: '.$uid.' register his gakey: '.$ga_id);
 
         return true;
     }
@@ -176,7 +176,7 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML_Auth_Source
             $q = 'DELETE FROM sspga_gakeys WHERE uid="'.$uid.'" AND gakey="'.$ga_id.'";';
         }
         $this->dbh->query($q);
-        SimpleSAML_Logger::info('authtfaga: '.$uid.' delete his gakey: '.$ga_id);
+        SimpleSAML\Logger::info('authtfaga: '.$uid.' delete his gakey: '.$ga_id);
 
         return true;
     }
