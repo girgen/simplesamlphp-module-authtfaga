@@ -143,12 +143,10 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML\Auth\Source
 
     public function isEnabled2fa($uid)
     {
-        $q = "SELECT * FROM sspga_status WHERE uid='$uid'";
+        $q = "SELECT enable FROM sspga_status WHERE uid='$uid'";
         $result = $this->dbh->query($q);
-        $row = $result->fetch();
-        $enabled = $row['enable'];
-
-        return $enabled;
+        if ($row = $result->fetch()) return $row['enable'];
+        return null;
     }
 
     public function registerGAkey($uid, $ga_id)
@@ -185,9 +183,8 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML\Auth\Source
     {
         $q = "SELECT gakey FROM sspga_gakeys WHERE uid='$uid'";
         $result = $this->dbh->query($q);
-        $row = $result->fetch();
-
-        return $row['gakey'];
+        if ($row = $result->fetch()) return $row['gakey'];
+        return null;
     }
 
     /**
