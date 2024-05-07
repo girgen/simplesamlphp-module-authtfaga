@@ -267,7 +267,7 @@ class sspmod_authtfaga_Auth_Source_authtfaga extends SimpleSAML\Auth\Source
     {
         $urlencoded = rawurlencode('otpauth://totp/'.$name.'?secret='.$secret.'&issuer='.$issuer);
 
-        return 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl='.$urlencoded.'';
+        return 'https://quickchart.io/qr?text='.$urlencoded;
     }
 
     /**
